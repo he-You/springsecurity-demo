@@ -1,0 +1,7 @@
+server:
+  port: 8090
+  servlet:
+    context-path: /security-springboot
+spring:
+  application:
+    name: security-springboot
