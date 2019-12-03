@@ -29,4 +29,17 @@ public class LoginController {
         System.out.println("进入r2接口");
         return "请求资源2";
     }
+
+
+
+    @RequestMapping("/errorPage")
+    public String toErrorPage(){
+        return "error";
+    }
+
+
+    @RequestMapping("/homePage")
+    public String toHomePage(){
+        return "home";
+    }
 }
