@@ -30,16 +30,4 @@ public class LoginController {
         return "请求资源2";
     }
 
-
-
-    @RequestMapping("/errorPage")
-    public String toErrorPage(){
-        return "error";
-    }
-
-
-    @RequestMapping("/homePage")
-    public String toHomePage(){
-        return "home";
-    }
 }

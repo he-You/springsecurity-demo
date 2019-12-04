@@ -22,30 +22,35 @@ import javax.annotation.Resource;
  */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Resource
-    MyUserDetailsService userDetailsService;
+    @Override
+    @Bean
+    public UserDetailsService userDetailsService(){
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User.withUsername("wilder").password("123").authorities("p1").build());
+        manager.createUser(User.withUsername("nick").password("456").authorities("p2").build());
+        System.out.println(manager.toString());
+        return manager;
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return NoOpPasswordEncoder.getInstance();
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                // 以下不用登录就能访问
-                .antMatchers("/","errorPage").permitAll()
-                // 其他请求必须登录才能访问
-                .antMatchers("r/r1").hasAuthority("ROLE_USER")
-                .antMatchers("r/r2").hasAuthority("p2")
-                .anyRequest().authenticated()
+                //必须有p1权限的用户才能访问资源
+                .antMatchers("/r/r1").hasAuthority("p1")
+                //必须有p2权限的用户才能访问资源
+                .antMatchers("/r/r2").hasAuthority("p2")
+                //所有r/**的请求必须认证通过
+                .antMatchers("/r/**").authenticated()
+                //除了/r/**的请求,其他的请求都可以访问
+                .anyRequest().permitAll()
                 .and()
+                //允许表单登录
                 .formLogin()
+                //自定义登录成功的页面地址
                 .successForwardUrl("/login-sucess");
-        // 开启注销功能
-        http.logout();
-
-    }
-
-
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 }
